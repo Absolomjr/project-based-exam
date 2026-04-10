@@ -204,7 +204,7 @@ class MovieSyncService:
                 director_ids.append(person.id)
         movie.directors.set(director_ids)
 
-        # Top 10 cast
+        # The Top 10 cast
         MovieCast.objects.filter(movie=movie).delete()
         for i, cast_member in enumerate(credits.get("cast", [])[:10]):
             person, _ = Person.objects.update_or_create(
