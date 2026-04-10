@@ -1,5 +1,5 @@
 """
-Management command to sync movie data from TMDB.
+The Management command to that helps to sync movie data from TMDB.
 Usage:
     python manage.py sync_movies --genres          # Sync all genres
     python manage.py sync_movies --trending 3      # Sync 3 pages of trending
