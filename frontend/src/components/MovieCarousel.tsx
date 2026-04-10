@@ -38,6 +38,9 @@ export default function MovieCarousel({
       scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
     }
   };
+  
+  //  safe array of movies
+  const safeMovies = Array.isArray(movies) ? movies : [];
 
   return (
     <section className="relative">
@@ -96,7 +99,7 @@ export default function MovieCarousel({
             ? Array.from({ length: 8 }).map((_, i) => (
                 <MovieCardSkeleton key={i} />
               ))
-            : movies.map((movie, i) => (
+            : safeMovies.map((movie, i) => (
                 <MovieCard
                   key={movie.id || movie.tmdb_id}
                   movie={movie}
