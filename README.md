@@ -24,8 +24,8 @@ A full-stack movie discovery platform built with **Django REST Framework** (back
 cd backend
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
+pytpip install -r requirements.txt
+hon manage.py migrate
 python manage.py sync_movies --genres
 python manage.py sync_movies --trending 2
 python manage.py runserver
