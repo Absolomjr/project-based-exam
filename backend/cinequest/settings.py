@@ -26,12 +26,13 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "django_filters",
-    "movie.apps.MoviesConfig",
+    "movies.apps.MoviesConfig",
     "recommendations.apps.RecommendationsConfig",
     "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
