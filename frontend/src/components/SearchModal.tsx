@@ -13,6 +13,7 @@ interface SearchModalProps {
   onClose: () => void;
 }
 
+// State for search query, results, loading indicator, and keyboard navigation index
 export default function SearchModal({ open, onClose }: SearchModalProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<MovieCompact[]>([]);
@@ -66,7 +67,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
     return () => clearTimeout(timer);
   }, [query]);
 
-  // Keyboard nav in results
+//  Handle keyboard navigation inside results list
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
