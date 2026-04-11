@@ -17,7 +17,9 @@ export default function HeroSection({ movies }: HeroSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
-
+  
+  
+  // Ensure movies is a valid array and limit hero section to top 6 items for performance and UI clarity
   const heroMovies = Array.isArray(movies)
   ? movies.slice(0, 6)
   : [];
@@ -40,7 +42,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
     goTo((activeIndex - 1 + heroMovies.length) % heroMovies.length);
   }, [activeIndex, heroMovies.length, goTo]);
 
-  // Auto-advance
+  //Automatically cycle through movies at a fixed interval unless user pauses by hovering
   useEffect(() => {
     if (isPaused || heroMovies.length <= 1) return;
     const timer = setInterval(goNext, SLIDE_DURATION);
