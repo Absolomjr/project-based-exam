@@ -1,6 +1,6 @@
 
-# Comprehensive test suite for Movies API.
-# Tests cover key endpoints, model logic, and data synchronization behavior.
+#  The Comprehensive test suite for Movies API.
+# Tests that cover key endpoints, model logic, and data synchronization behaviour.
 
 
 from django.test import TestCase, APIClient
@@ -13,6 +13,7 @@ from .models import Movie, Genre, Person, MovieCast
 from .serializers import MovieDetailSerializer, GenreSerializer
 
 User = get_user_model()
+
 
 
 class GenreModelTests(TestCase):
