@@ -20,6 +20,7 @@ export default function MovieCard({
   index = 0,
 }: MovieCardProps) {
   const tmdbId = movie.tmdb_id || movie.id;
+  // Build poster image URL, fallback supports both API formats (poster_url vs poster_path)
   const imgUrl = posterUrl(
     movie.poster_url || (movie as any).poster_path,
     size === "sm" ? "w185" : "w500"
