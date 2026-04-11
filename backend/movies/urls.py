@@ -1,6 +1,10 @@
+# URL routing configuration for the Movie API.
+# This module defines all API endpoints related to movies, 
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from .comparison_engine import advanced_movie_comparison, discover_similar_movies
 
 router = DefaultRouter()
 router.register(r"list", views.MovieViewSet, basename="movie")
@@ -18,5 +22,7 @@ urlpatterns = [
     path("moods/<str:mood_slug>/", views.mood_movies, name="mood-movies"),
     path("discover/", views.discover_filtered, name="discover-filtered"),
     path("compare/", views.compare_movies, name="compare-movies"),
+    path("analytics/compare/", advanced_movie_comparison, name="advanced-comparison"),
+    path("analytics/similar/<int:tmdb_id>/", discover_similar_movies, name="discover-similar"),
     path("", include(router.urls)),
 ]
