@@ -104,4 +104,28 @@ export interface GenrePreference {
   interaction_count: number;
 }
 
+// Watchlist Types
 
+export interface WatchlistItem {
+  id: number;
+  user_id: number;
+  movie_tmdb_id: number;
+  movie_title: string;
+  poster_path: string;
+  added_at: string;
+  watched: boolean;
+  watched_at: string | null;
+}
+
+// Interaction Types
+
+export interface UserMovieInteraction {
+  id: number;
+  user_id: number;
+  movie_tmdb_id: number;
+  movie_title: string;
+  interaction_type: "view" | "like" | "dislike" | "watchlist" | "watched" | "search";
+  genre_ids: number[];
+  rating: number | null;
+  created_at: string;
+}

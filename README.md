@@ -28,7 +28,7 @@ pytpip install -r requirements.txt
 hon manage.py migrate
 python manage.py sync_movies --genres
 python manage.py sync_movies --trending 2
-python manage.py runserver
+python manage.py runserve
 ```
 
 ### Frontend

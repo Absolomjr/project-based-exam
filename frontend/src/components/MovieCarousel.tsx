@@ -39,7 +39,7 @@ export default function MovieCarousel({
     }
   };
   
-  //  safe array of movies
+  //  The safe array of movies
   const safeMovies = Array.isArray(movies) ? movies : [];
 
   return (
