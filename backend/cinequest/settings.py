@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
 ]
 
+# added cors middleware
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
