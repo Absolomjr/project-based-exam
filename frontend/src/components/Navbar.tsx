@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Search, Menu, X, Film, Compass, Star, Clapperboard,
@@ -17,11 +17,24 @@ export default function Navbar() {
   const [authOpen, setAuthOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  // Global keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const navLinks = [
     { href: "/search", label: "Discover", icon: Compass },
     { href: "/genre", label: "Genres", icon: Clapperboard },
     { href: "/mood", label: "Mood", icon: Sparkles },
     { href: "/compare", label: "Compare", icon: ArrowLeftRight },
+    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
     { href: "/search?sort=top_rated", label: "Top Rated", icon: Star },
   ];
 
@@ -57,15 +70,6 @@ export default function Navbar() {
                   {label}
                 </Link>
               ))}
-              {isAuthenticated && (
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-white/50 hover:text-white hover:bg-white/5 transition-all duration-200"
-                >
-                  <BarChart3 className="w-3.5 h-3.5" />
-                  Dashboard
-                </Link>
-              )}
             </div>
 
             {/* Actions */}
@@ -156,15 +160,6 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
-            {isAuthenticated && (
-              <Link
-                href="/dashboard"
-                className="block text-sm text-white/50 hover:text-white py-2.5 px-3 rounded-lg hover:bg-white/5"
-                onClick={() => setMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-            )}
           </div>
         )}
       </nav>
