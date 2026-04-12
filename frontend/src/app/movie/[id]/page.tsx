@@ -29,6 +29,7 @@ function getLikedMovies(): any[] {
   }
 }
 
+// Persist liked movies to localStorage
 function saveLikedMovies(movies: any[]) {
   if (typeof window === "undefined") return;
   localStorage.setItem("cq_liked", JSON.stringify(movies));
