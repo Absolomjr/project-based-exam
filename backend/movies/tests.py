@@ -115,7 +115,10 @@ class MovieModelTests(TestCase):
         self.assertEqual(movie.genres.count(), 2)
         self.assertIn(self.genre, movie.genres.all())
 
-
+# API endpoint tests:
+# Verifies that all movie-related endpoints return correct responses,
+# handle invalid inputs properly, and maintain consistent response structure.
+# Includes pagination, filtering, and error handling scenarios.
 class MovieAPITests(APITestCase):
     """Test Movie API endpoints."""
 
