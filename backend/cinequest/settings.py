@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
 ]
 
-# added cors middleware
+# middleware configuration (request/response processing)
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -62,6 +62,7 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = "cinequest.wsgi.application"
 
+# database configuration(using SQLite for development, can be switched to PostgreSQL in production)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
