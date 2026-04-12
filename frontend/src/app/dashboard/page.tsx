@@ -64,7 +64,7 @@ export default function DashboardPage() {
     }
   }
 
-  // Not logged in
+  // Not logged in authentication
   if (!authLoading && !isAuthenticated) {
     return (
       <div className="pt-24 pb-20 px-6 md:px-10 lg:px-20 max-w-[1440px] mx-auto">
