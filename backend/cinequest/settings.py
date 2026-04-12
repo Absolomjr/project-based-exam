@@ -15,6 +15,7 @@ DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# core Django apps, third-party apps, and our custom apps
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
