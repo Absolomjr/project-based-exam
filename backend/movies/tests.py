@@ -190,7 +190,10 @@ class MovieAPITests(APITestCase):
             self.assertIn('label', mood)
             self.assertIn('description', mood)
 
-
+# External API integration tests (TMDB):
+# These tests validate endpoints that depend on third-party services.
+# Responses may vary (200, 404, 500) depending on API availability,
+# so tests focus on resilience rather than strict success conditions.
 class TrendingMoviesTests(APITestCase):
     """Test trending movies endpoint."""
 
