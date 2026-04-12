@@ -1,5 +1,6 @@
 "use client";
 
+// Imports for the recommendations/dashboard component.
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -9,10 +10,39 @@ import {
 import { useAuth } from "@/lib/AuthContext";
 import { recommendationsAPI } from "@/lib/api";
 
+interface DashboardSummary {
+  total_interactions: number;
+  likes: number;
+  dislikes: number;
+  watched: number;
+  watchlist_total: number;
+}
+
+interface DashboardStat {
+  summary: DashboardSummary;
+  genre_distribution: Array<{ name: string; count: number }>;
+  preference_scores: Array<{ name: string; weight: number }>;
+  activity_timeline: Array<{ date: string; count: number }>;
+  recent_activity: Array<{
+    interaction_type: string;
+    movie_title: string;
+    created_at: string;
+  }>;
+}
+
+const EMPTY_SUMMARY: DashboardSummary = {
+  total_interactions: 0,
+  likes: 0,
+  dislikes: 0,
+  watched: 0,
+  watchlist_total: 0,
+};
+
 export default function DashboardPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<DashboardStat | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -23,11 +53,12 @@ export default function DashboardPage() {
   }, [isAuthenticated]);
 
   async function fetchDashboard() {
+    setError(null);
     try {
       const data = await recommendationsAPI.getDashboard();
       setStats(data);
-    } catch (err) {
-      console.error("Dashboard error:", err);
+    } catch {
+      setError("Could not load dashboard data. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,13 +104,13 @@ export default function DashboardPage() {
     );
   }
 
-  const summary = stats?.summary || {};
+  const summary: DashboardSummary = stats?.summary ?? EMPTY_SUMMARY;
   const genreDist = stats?.genre_distribution || [];
   const prefScores = stats?.preference_scores || [];
   const timeline = stats?.activity_timeline || [];
   const recent = stats?.recent_activity || [];
-  const maxGenreCount = Math.max(...genreDist.map((g: any) => g.count), 1);
-  const maxPrefWeight = Math.max(...prefScores.map((p: any) => p.weight), 1);
+  const maxGenreCount = Math.max(...genreDist.map((g) => g.count), 1);
+  const maxPrefWeight = Math.max(...prefScores.map((p) => p.weight), 1);
 
   const statCards = [
     { label: "Liked", value: summary.likes || 0, icon: Heart, color: "text-emerald-400", bg: "from-emerald-500/10 to-emerald-600/5" },
@@ -119,6 +150,18 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      {error && (
+        <div className="mb-10 rounded-xl border border-red-500/20 bg-red-500/10 p-4 flex items-center justify-between gap-4">
+          <p className="text-sm text-red-300">{error}</p>
+          <button
+            onClick={fetchDashboard}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         {/* Genre distribution */}
         <div className="glass-card rounded-xl p-6">
@@ -128,7 +171,7 @@ export default function DashboardPage() {
           </div>
           {genreDist.length > 0 ? (
             <div className="space-y-3">
-              {genreDist.slice(0, 8).map((genre: any) => (
+              {genreDist.slice(0, 8).map((genre) => (
                 <div key={genre.name} className="flex items-center gap-3">
                   <span className="text-[12px] text-white/50 w-24 text-right flex-shrink-0 truncate">
                     {genre.name}
@@ -158,7 +201,7 @@ export default function DashboardPage() {
           </div>
           {prefScores.length > 0 ? (
             <div className="space-y-3">
-              {prefScores.slice(0, 8).map((pref: any) => (
+              {prefScores.slice(0, 8).map((pref) => (
                 <div key={pref.name} className="flex items-center gap-3">
                   <span className="text-[12px] text-white/50 w-24 text-right flex-shrink-0 truncate">
                     {pref.name}
@@ -189,8 +232,8 @@ export default function DashboardPage() {
             <h2 className="text-lg font-bold font-display">Activity (Last 30 Days)</h2>
           </div>
           <div className="flex items-end gap-1 h-32">
-            {timeline.map((day: any) => {
-              const maxCount = Math.max(...timeline.map((d: any) => d.count), 1);
+            {timeline.map((day) => {
+              const maxCount = Math.max(...timeline.map((d) => d.count), 1);
               const height = (day.count / maxCount) * 100;
               return (
                 <div
@@ -221,7 +264,7 @@ export default function DashboardPage() {
             <h2 className="text-lg font-bold font-display">Recent Activity</h2>
           </div>
           <div className="space-y-2">
-            {recent.map((item: any, i: number) => (
+            {recent.map((item, i: number) => (
               <div
                 key={i}
                 className="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/[0.04]"
@@ -247,7 +290,7 @@ export default function DashboardPage() {
       )}
 
       {/* Empty state */}
-      {summary.total_interactions === 0 && (
+      {!error && summary.total_interactions === 0 && (
         <div className="text-center py-16 glass-card rounded-2xl">
           <BarChart3 className="w-10 h-10 text-gold/20 mx-auto mb-4" />
           <h3 className="text-xl font-bold font-display mb-2">No activity yet</h3>
