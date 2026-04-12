@@ -35,6 +35,7 @@ function saveLikedMovies(movies: any[]) {
   localStorage.setItem("cq_liked", JSON.stringify(movies));
 }
 
+// Retrieve watchlist from localStorage
 function getWatchlist(): any[] {
   if (typeof window === "undefined") return [];
   try {
