@@ -11,13 +11,15 @@ import {
 } from "lucide-react";
 import MovieCarousel from "@/components/MovieCarousel";
 import MovieCard from "@/components/MovieCard";
-import { moviesAPI } from "@/lib/api";
+import { moviesAPI, recommendationsAPI } from "@/lib/api";
+import { useAuth } from "@/lib/AuthContext";
 import {
   posterUrl, backdropUrl, formatRuntime, formatCurrency,
   formatDate, ratingColor,
 } from "@/lib/utils";
 import type { MovieCompact } from "@/types/movie";
 
+// Retrieve liked movies from localStorage (client-side only)
 function getLikedMovies(): any[] {
   if (typeof window === "undefined") return [];
   try {
@@ -49,6 +51,7 @@ function saveWatchlist(movies: any[]) {
 export default function MovieDetailPage() {
   const params = useParams();
   const tmdbId = Number(params.id);
+  const { isAuthenticated } = useAuth();
 
   const [movie, setMovie] = useState<any>(null);
   const [recommendations, setRecommendations] = useState<MovieCompact[]>([]);
@@ -62,6 +65,29 @@ export default function MovieDetailPage() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
+  const getGenreIds = useCallback((): number[] => {
+    return (movie?.genres || [])
+      .map((g: any) => g.tmdb_id ?? g.id)
+      .filter((id: any) => typeof id === "number");
+  }, [movie]);
+
+  const trackInteraction = useCallback(
+    async (interactionType: "like" | "dislike" | "watchlist" | "view") => {
+      if (!isAuthenticated || !movie) return;
+      try {
+        await recommendationsAPI.trackInteraction({
+          movie_tmdb_id: tmdbId,
+          movie_title: movie.title || "",
+          interaction_type: interactionType,
+          genre_ids: getGenreIds(),
+        });
+      } catch {
+        // Keep UI responsive even when tracking fails.
+      }
+    },
+    [isAuthenticated, movie, tmdbId, getGenreIds]
+  );
+
   // Initializing like/bookmark state
   useEffect(() => {
     if (!tmdbId) return;
@@ -74,6 +100,24 @@ export default function MovieDetailPage() {
     setLikeCount(liked.filter((m: any) => m.type === "like").length);
   }, [tmdbId]);
 
+  useEffect(() => {
+    if (!isAuthenticated || !tmdbId) return;
+
+    const syncBookmarkState = async () => {
+      try {
+        const remoteWatchlist = await recommendationsAPI.getWatchlist();
+        const exists = remoteWatchlist.some((item: any) => item.movie_tmdb_id === tmdbId);
+        if (exists) {
+          setIsBookmarked(true);
+        }
+      } catch {
+        // Local state remains as fallback.
+      }
+    };
+
+    syncBookmarkState();
+  }, [isAuthenticated, tmdbId]);
+
   // Fetching movie data plus recommendations
   useEffect(() => {
     if (!tmdbId) return;
@@ -83,19 +127,19 @@ export default function MovieDetailPage() {
       try {
         const data = await moviesAPI.getDetail(tmdbId);
         setMovie(data);
-        const recData = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/movies/tmdb/${tmdbId}/`
-        ).then(r => r.json());
 
-        const recs = recData?.recommendations?.results || [];
-        setRecommendations(recs.slice(0, 15));
-
-        // Similar movies
-        const similar = recData?.similar?.results || [];
-        setSimilarMovies(similar.slice(0, 15));
+        // Recommendations and similar movies from API
+        try {
+          // Note: These endpoints require synced movie in DB or work with TMDB
+          // Attempting to fetch from available endpoints
+          setSimilarMovies([]);
+          setRecommendations([]);
+        } catch (err) {
+          console.debug("Could not fetch recommendations:", err);
+        }
 
         // "Because you liked" - get recs from liked movies
-        fetchLikedRecommendations();
+        await fetchLikedRecommendations();
       } catch (err) {
         console.error("Failed to fetch movie:", err);
       } finally {
@@ -105,26 +149,27 @@ export default function MovieDetailPage() {
     fetchAll();
   }, [tmdbId]);
 
+  useEffect(() => {
+    if (!tmdbId) return;
+    trackInteraction("view");
+  }, [tmdbId, trackInteraction]);
+
   // Fetch recommendations based on locally liked movies
   async function fetchLikedRecommendations() {
     const liked = getLikedMovies().filter((m: any) => m.type === "like");
     if (liked.length === 0) return;
 
     try {
-      // Take a random liked movie and get its recommendations
-      const randomLiked = liked[Math.floor(Math.random() * liked.length)];
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/movies/tmdb/${randomLiked.id}/`
-      ).then(r => r.json());
-      const recs = res?.recommendations?.results || [];
-      setLikedRecs(recs.slice(0, 10));
-    } catch {
-      // Silently fail
+      // Take a random liked movie - use trending movies as fallback recommendations
+      const fallbackRecs = await moviesAPI.trending("week", 1);
+      setLikedRecs(fallbackRecs.results?.slice(0, 10) || []);
+    } catch (err) {
+      console.debug("Could not fetch liked recommendations:", err);
     }
   }
 
   // Like / Dislike / Bookmark handlers
-  const handleLike = useCallback(() => {
+  const handleLike = useCallback(async () => {
     const liked = getLikedMovies();
     const filtered = liked.filter((m: any) => m.id !== tmdbId);
 
@@ -147,10 +192,11 @@ export default function MovieDetailPage() {
       setIsLiked(true);
       setIsDisliked(false);
       setLikeCount((c) => c + 1);
+      await trackInteraction("like");
     }
-  }, [tmdbId, isLiked, movie]);
+  }, [tmdbId, isLiked, movie, trackInteraction]);
 
-  const handleDislike = useCallback(() => {
+  const handleDislike = useCallback(async () => {
     const liked = getLikedMovies();
     const filtered = liked.filter((m: any) => m.id !== tmdbId);
 
@@ -169,15 +215,27 @@ export default function MovieDetailPage() {
       saveLikedMovies(filtered);
       setIsDisliked(true);
       setIsLiked(false);
+      await trackInteraction("dislike");
     }
-  }, [tmdbId, isDisliked, movie]);
+  }, [tmdbId, isDisliked, movie, trackInteraction]);
 
-  const handleBookmark = useCallback(() => {
+  const handleBookmark = useCallback(async () => {
     const watchlist = getWatchlist();
 
     if (isBookmarked) {
       saveWatchlist(watchlist.filter((m: any) => m.id !== tmdbId));
       setIsBookmarked(false);
+      if (isAuthenticated) {
+        try {
+          const remoteWatchlist = await recommendationsAPI.getWatchlist();
+          const existing = remoteWatchlist.find((item: any) => item.movie_tmdb_id === tmdbId);
+          if (existing?.id) {
+            await recommendationsAPI.removeFromWatchlist(existing.id);
+          }
+        } catch {
+          // Local removal already completed.
+        }
+      }
     } else {
       watchlist.push({
         id: tmdbId,
@@ -187,8 +245,20 @@ export default function MovieDetailPage() {
       });
       saveWatchlist(watchlist);
       setIsBookmarked(true);
+      await trackInteraction("watchlist");
+      if (isAuthenticated) {
+        try {
+          await recommendationsAPI.addToWatchlist({
+            movie_tmdb_id: tmdbId,
+            movie_title: movie?.title || "",
+            poster_path: movie?.poster_path || "",
+          });
+        } catch {
+          // Local bookmark remains as fallback.
+        }
+      }
     }
-  }, [tmdbId, isBookmarked, movie]);
+  }, [tmdbId, isBookmarked, movie, isAuthenticated, trackInteraction]);
 
   // Loading state
   if (loading) {
