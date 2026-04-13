@@ -10,6 +10,8 @@ import {
 import { useAuth } from "@/lib/AuthContext";
 import { recommendationsAPI } from "@/lib/api";
 
+
+// Defines the structure of aggregated user interaction metrics used in the dashboard,
 interface DashboardSummary {
   total_interactions: number;
   likes: number;
