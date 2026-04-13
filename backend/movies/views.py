@@ -1,8 +1,3 @@
-"""
-Django REST framework views for movie discovery.
-Provides Movie, Genre, and Person endpoints with TMDB and Wikipedia integration.
-"""
-
 import logging
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view, permission_classes
@@ -23,6 +18,8 @@ tmdb = TMDBService()
 sync_service = MovieSyncService()
 
 ##  The Movie ViewSet
+# This ViewSet provides read-only access to Movie objects.
+# It supports listing movies and retrieving a single movie.
 class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "directors").all()
     permission_classes = [AllowAny]
