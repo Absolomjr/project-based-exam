@@ -1,4 +1,5 @@
 "use client";
+// main entry point for browsing movies by genre.
 
 import GenreGrid from "@/components/GenreGrid";
 import { Clapperboard } from "lucide-react";
