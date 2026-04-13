@@ -26,6 +26,8 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["genres__slug"]
 
+# Dynamically choose the serializer depending on whether the user is
+    # requesting a single movie detail view or a movie list view.
     def get_serializer_class(self):
         if self.action == "retrieve":
             return MovieDetailSerializer
