@@ -1,7 +1,7 @@
-/**
- * Frontend Component Tests
- * Tests for critical UI components and user interactions
- */
+
+//  Frontend Component Tests
+//  Tests for critical UI components and user interactions
+ 
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -10,9 +10,9 @@ import MovieCarousel from '@/components/MovieCarousel';
 import SearchModal from '@/components/SearchModal';
 import type { MovieCompact } from '@/types/movie';
 
-/**
- * Mock data for testing
- */
+
+// Mock data for testing
+ 
 const mockMovie: MovieCompact = {
   id: 1,
   tmdb_id: 550,
@@ -278,7 +278,7 @@ describe('MovieCarousel Array Safety', () => {
       />
     );
     
-    // Check that all movies display with correct titles
+
     mockMovies.forEach(movie => {
       expect(screen.getByText(movie.title)).toBeInTheDocument();
     });
