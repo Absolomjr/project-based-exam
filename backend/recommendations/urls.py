@@ -5,6 +5,7 @@ from . import views
 router = DefaultRouter()
 router.register(r"watchlist", views.WatchlistViewSet, basename="watchlist")
 
+# definition of API endpoints for movie recommendations and user interactions.
 urlpatterns = [
     path("for-you/", views.personalized_recommendations, name="for-you"),
     path("because-you-watched/", views.because_you_watched, name="because-you-watched"),
