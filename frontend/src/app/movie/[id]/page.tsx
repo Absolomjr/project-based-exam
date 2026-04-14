@@ -21,7 +21,7 @@ import type { MovieCompact } from "@/types/movie";
 
 // Retrieve liked movies from localStorage (client-side only)
 function getLikedMovies(): any[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") return []
   try {
     return JSON.parse(localStorage.getItem("cq_liked") || "[]");
   } catch {
@@ -171,7 +171,8 @@ export default function MovieDetailPage() {
     }
   }
 
-  // Like / Dislike / Bookmark handlers
+  
+  // definition of the likeCount, dislike and bookmark handlers
   const handleLike = useCallback(async () => {
     const liked = getLikedMovies();
     const filtered = liked.filter((m: any) => m.id !== tmdbId);
