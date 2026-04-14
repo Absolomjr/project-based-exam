@@ -96,7 +96,7 @@ export default function HeroSection({ movies }: HeroSectionProps) {
         );
       })}
 
-      {/* Gradient overlays */}
+      {/*  The Gradient overlays */}
       <div className="hero-gradient absolute inset-0" />
       <div className="hero-side-gradient absolute inset-0" />
 
