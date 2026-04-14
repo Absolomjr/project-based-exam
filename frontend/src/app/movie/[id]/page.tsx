@@ -50,7 +50,7 @@ function saveWatchlist(movies: any[]) {
   localStorage.setItem("cq_watchlist", JSON.stringify(movies));
 }
 
-// Main component for rendering movie details and user interactions
+// The main component used  for rendering movie details and user interactions
 export default function MovieDetailPage() {
   const params = useParams();
   const tmdbId = Number(params.id);
