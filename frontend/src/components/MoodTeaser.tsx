@@ -6,7 +6,7 @@ import {
   Mountain, ArrowRight,
 } from "lucide-react";
 
-// Preview list of moods shown in the UI (used for quick navigation + visual suggestions)
+// The Preview list of moods shown in the UI (used for quick navigation + visual suggestions)
 const MOODS_PREVIEW = [
   { slug: "cozy-night", label: "Cozy Night", icon: Heart, color: "from-pink-500/20 to-rose-600/20", iconColor: "text-pink-400" },
   { slug: "adrenaline", label: "Adrenaline", icon: Zap, color: "from-red-500/20 to-orange-600/20", iconColor: "text-red-400" },
@@ -55,7 +55,7 @@ export default function MoodTeaser() {
           {/*  Mood pills */}
           <div className="grid grid-cols-3 gap-2.5 lg:gap-3">
             {MOODS_PREVIEW.map((mood) => {
-              // Dynamically render mood cards with icon + styling based on config above
+              // Dynamically rendering  mood cards with icon + styling based on config above
               const Icon = mood.icon;
               return (
                 <Link
@@ -63,7 +63,7 @@ export default function MoodTeaser() {
                   href={`/mood?mood=${mood.slug}`}
                   className="genre-card glass-card group rounded-xl p-4 text-center relative overflow-hidden"
                 >
-                  {/* Hover gradient overlay for visual feedback */}
+                  {/*The  Hover gradient overlay for visual feedback */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${mood.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                   <div className="relative z-10">
                     <Icon className={`w-5 h-5 mx-auto mb-1.5 text-white/25 group-hover:${mood.iconColor} transition-colors`} />
