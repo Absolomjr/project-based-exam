@@ -42,7 +42,7 @@ export function clearTokens() {
   }
 }
 
-// Fetch Wrappe
+// the fetch wrapper that handles authentication and token refreshing
 
 async function apiFetch<T>(
   endpoint: string,
@@ -94,7 +94,7 @@ async function apiFetch<T>(
   return response.json();
 }
 
-// Auth API
+//  The Auth API
 
 export const authAPI = {
   login: async (username: string, password: string) => {
