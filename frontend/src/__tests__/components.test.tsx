@@ -72,7 +72,7 @@ describe('MovieCard Component', () => {
   });
 
   /**
-   * Test: MovieCard handles missing year gracefully
+   * Test: MovieCard handles the missing year gracefully
    * Why: Ensures component doesn't crash with incomplete data
    */
   test('handles movie without year gracefully', () => {
