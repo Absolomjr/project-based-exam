@@ -37,6 +37,11 @@ export default function ComparePage() {
     }
   }
 
+  /**
+ * Fetches detailed movie data from the API using a TMDB ID and assigns it
+ * to either Movie A or Movie B for comparison.
+ */
+
   async function selectMovie(tmdbId: number, side: "A" | "B") {
     setLoading(true);
     try {
