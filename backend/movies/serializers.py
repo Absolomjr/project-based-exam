@@ -1,3 +1,12 @@
+"""
+Serializers for the movies app.
+
+This module defines Django REST Framework serializers that transform
+Movie, Person, Genre, Cast, and WatchProvider models into JSON responses.
+It includes both compact (list) and detailed serializers, along with
+custom computed fields and formatting for external API data (TMDB).
+"""
+
 from rest_framework import serializers
 from .models import Genre, Person, Movie, MovieCast, WatchProvider
 
