@@ -1,3 +1,5 @@
+ #CineQuest - Environment Setup & Installation Guide
+
 ## Overview
 This guide provides step-by-step instructions for setting up the CineQuest application, including backend (Django) and frontend (Next.js) environments.
 
