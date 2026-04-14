@@ -1,3 +1,10 @@
+"""
+Serializers for user management.
+
+Handles user data representation and registration, including
+validation and secure password handling.
+"""
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
