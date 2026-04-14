@@ -104,7 +104,7 @@ export interface GenrePreference {
   interaction_count: number;
 }
 
-// Watchlist Types
+//  definition of Watchlist Types
 
 export interface WatchlistItem {
   id: number;
