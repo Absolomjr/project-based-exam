@@ -1,4 +1,4 @@
- #CineQuest - Environment Setup & Installation Guide
+# CineQuest - Environment Setup & Installation Guide
 
 ## Overview
 This guide provides step-by-step instructions for setting up the CineQuest application, including backend (Django) and frontend (Next.js) environments.
@@ -110,6 +110,14 @@ yarn dev
 
 Frontend will be available at: `http://localhost:3000`
 
+### 5. Verify Journey Feature
+After both servers are running:
+
+1. Sign in with any user account
+2. Open `http://localhost:3000/journey`
+3. Confirm timeline cards and activity chart load
+4. Confirm top navigation includes `Journey`
+
 ### 4. Build for Production (Optional)
 ```bash
 npm run build
@@ -146,6 +154,18 @@ python manage.py migrate
 Solution: Verify NEXT_PUBLIC_API_URL in .env.local
 $ cat .env.local  # Check the value
 ```
+
+**Problem: Journey endpoint returns 404 (`/api/recommendations/journey/`)**
+- Ensure backend is restarted after pulling latest changes:
+```bash
+cd backend
+python manage.py runserver
+```
+- Verify route exists:
+```bash
+python manage.py shell -c "from django.urls import resolve; print(resolve('/api/recommendations/journey/').view_name)"
+```
+- Expected output: `journey-timeline`
 
 **Problem: Port already in use**
 ```bash
@@ -228,6 +248,7 @@ CineQuest/
 - `GET /api/recommendations/for-you/` - Personalized recommendations
 - `GET /api/recommendations/watchlist/` - User's watchlist
 - `POST /api/recommendations/track/` - Track user interaction
+- `GET /api/recommendations/journey/?days=30` - Movie journey timeline and insight analytics
 
 ---
 
