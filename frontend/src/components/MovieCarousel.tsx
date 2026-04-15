@@ -89,7 +89,7 @@ export default function MovieCarousel({
         </div>
       </div>
 
-      {/* Carousel */}
+      {/* The Carousel */}
       <div className="scroll-mask">
         <div
           ref={scrollRef}
