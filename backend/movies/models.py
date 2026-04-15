@@ -1,4 +1,9 @@
 
+# Defines the core data models for the CineQuest application, including movies,
+# genres, people (actors, directors), and related entities. These models store
+# and manage movie data fetched from TMDB, along with relationships such as cast,
+# directors, and streaming providers, enabling efficient querying and enrichment.
+
 from django.db import models
 from django.conf import settings
 
