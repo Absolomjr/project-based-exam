@@ -1,4 +1,6 @@
 
+# Defines core movie domain models, relationships, and computed properties for data access and presentation.
+
 from django.db import models
 from django.conf import settings
 
