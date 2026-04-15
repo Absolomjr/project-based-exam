@@ -7,30 +7,27 @@
 | Absolom | Team Lead / Full Stack Engineer | Architecture, integration, code review, release management, dashboard feature restoration |
 | Calvin | Backend Engineer | API endpoints, serializers, performance tuning |
 | Teopista | Frontend Engineer | UI pages, component composition, routing flows |
-|  Denzel| QA & Testing Engineer | Backend test coverage, validation scenarios, regression checks |
-| Jonnpol | DevOps & Environment Engineer | Environment variables, setup scripts, deployment readiness |
+|  Denzel| Frontend Engineer | Backend test coverage, validation scenarios, regression checks |
+| Jonnpol | Environment Engineer | Environment variables, setup scripts, deployment readiness |
 | Joan | Data & Sync Engineer | TMDB sync logic, data normalization, migrations integrity |
-| Kaka | API Integration Engineer | Frontend API client, error handling, endpoint contracts |
-| Trevor | UI/UX Engineer | Search UX, modal interactions, responsive behavior |
-| Megan | Documentation & Quality Engineer | Technical docs, contribution tracking, coding standards |
+| Kaka | UI/UX Engineer | Frontend API client, error handling, endpoint contracts |
+| Trevor | API Integration Engineer API Integration Engineer | Search UX, modal interactions, responsive behavior |
 | Jeffeson | Feature Engineer | Innovation feature delivery, journey analytics, enhancement work |
 
 ---
 
-## Specific File Contributions of the Members
+## Member Contribution Summary
 
-| Developer | Backend Files Modified (fixes/improvements) | Frontend/Docs Files Modified (fixes/improvements) |
-|-----------|---------------------------------------------|----------------------------------------------------|
-| Absolom | backend/recommendations/views.py; backend/movies/views.py; backend/movies/urls.py | frontend/src/app/dashboard/page.tsx; frontend/src/app/movie/[id]/page.tsx; frontend/src/lib/api.ts; frontend/src/lib/AuthContext.tsx |
-| Calvin | backend/movies/views.py; backend/movies/migrations/0001_initial.py; backend/movies/tests.py | frontend/src/types/movie.ts; frontend/src/app/page.tsx |
-| Teopista | backend/movies/views.py; backend/recommendations/views.py | frontend/src/app/dashboard/page.tsx; frontend/src/app/movie/[id]/page.tsx; frontend/src/app/genre/page.tsx; frontend/src/app/genre/[slug]/page.tsx |
-| Denzel | backend/movies/tests.py | frontend/src/__tests__/components.test.tsx; frontend/src/components/SearchModal.tsx |
-| Jonnpol | backend/requirements.txt; backend/cinequest/settings.py | frontend/package.json; frontend/next.config.js; frontend/tsconfig.json; frontend/tailwind.config.js; frontend/postcss.config.js |
-| Joan | backend/movies/migrations/0001_initial.py; backend/movies/management/commands/sync_movies.py | frontend/src/app/page.tsx; frontend/src/components/HeroSection.tsx |
-| Kaka | backend/movies/views.py; backend/recommendations/views.py; backend/recommendations/urls.py | frontend/src/lib/api.ts; frontend/src/app/search/page.tsx; frontend/src/app/movie/[id]/page.tsx |
-| Trevor | backend/movies/views.py | frontend/src/components/Navbar.tsx; frontend/src/components/MovieCarousel.tsx; frontend/src/components/MovieCard.tsx; frontend/src/components/Footer.tsx |
-| Megan | backend/movies/tests.py | CONTRIBUTIONS.md; PROJECT_COMPLETION_REPORT.md; QUICK_REFERENCE.md; BUG_AUDIT_REPORT.md |
-| Jeffeson | backend/recommendations/services/journey.py; backend/recommendations/views.py; backend/recommendations/urls.py | frontend/src/app/journey/page.tsx; frontend/src/components/Navbar.tsx; frontend/src/lib/api.ts; frontend/src/types/movie.ts |
+- Absolom led the overall architecture and integration work, restored backend and frontend flows, drove the dashboard recovery, and coordinated release-level fixes across the app.
+- Calvin handled backend model and API restoration, including movie data integrity, serialization, and core test coverage for the movies app.
+- Teopista focused on frontend reconstruction, especially page-level routing, dashboard presentation, and movie detail/user flow polish.
+- Denzel owned regression testing and validation, helping verify backend behavior and strengthening frontend component test coverage.
+- Jonnpol managed environment readiness, dependency setup, and project configuration to keep the application runnable and stable across backend and frontend.
+- Joan worked on TMDB sync and data normalization, ensuring movie imports, migration integrity, and homepage data flow stayed consistent.
+- Kaka improved API integration and frontend data handling, helping connect the client layer to backend endpoints and search flows.
+- Trevor refined the user-facing navigation and browsing experience, including the main navbar, carousel behavior, cards, and footer presentation.
+- Megan documented the project changes, keeping the contribution, completion, quick reference, and audit materials aligned with the implementation.
+- Jeffeson delivered the innovation feature, Movie Journey Timeline, including the backend aggregation service, endpoint exposure, frontend journey page, and navigation integration.
 
 ---
 
