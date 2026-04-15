@@ -11,5 +11,6 @@ urlpatterns = [
     path("preferences/", views.genre_preferences, name="genre-preferences"),
     path("track/", views.track_interaction, name="track-interaction"),
     path("dashboard/", views.dashboard_stats, name="dashboard-stats"),
+    path("journey/", views.journey_timeline, name="journey-timeline"),
     path("", include(router.urls)),
 ]
