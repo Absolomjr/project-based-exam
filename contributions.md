@@ -13,11 +13,11 @@
 | Kaka | API Integration Engineer | Frontend API client, error handling, endpoint contracts |
 | Trevor | UI/UX Engineer | Search UX, modal interactions, responsive behavior |
 | Megan | Documentation & Quality Engineer | Technical docs, contribution tracking, coding standards |
-| Jeffeson | Feature Engineer | Innovation feature delivery, comparison analytics, enhancement work |
+| Jeffeson | Feature Engineer | Innovation feature delivery, journey analytics, enhancement work |
 
 ---
 
-## Specific File Contributions of the memebers
+## Specific File Contributions of the Members
 
 | Developer | Backend Files Modified (fixes/improvements) | Frontend/Docs Files Modified (fixes/improvements) |
 |-----------|---------------------------------------------|----------------------------------------------------|
@@ -30,7 +30,7 @@
 | Kaka | backend/movies/views.py; backend/recommendations/views.py; backend/recommendations/urls.py | frontend/src/lib/api.ts; frontend/src/app/search/page.tsx; frontend/src/app/movie/[id]/page.tsx |
 | Trevor | backend/movies/views.py | frontend/src/components/Navbar.tsx; frontend/src/components/MovieCarousel.tsx; frontend/src/components/MovieCard.tsx; frontend/src/components/Footer.tsx |
 | Megan | backend/movies/tests.py | CONTRIBUTIONS.md; PROJECT_COMPLETION_REPORT.md; QUICK_REFERENCE.md; BUG_AUDIT_REPORT.md |
-| Jeffeson | backend/movies/comparison_engine.py; backend/movies/urls.py; backend/recommendations/services/engine.py | frontend/src/app/compare/page.tsx; frontend/src/app/compare/advanced/page.tsx |
+| Jeffeson | backend/recommendations/services/journey.py; backend/recommendations/views.py; backend/recommendations/urls.py | frontend/src/app/journey/page.tsx; frontend/src/components/Navbar.tsx; frontend/src/lib/api.ts; frontend/src/types/movie.ts |
 
 ---
 
@@ -156,33 +156,33 @@
 11. `docs: add SETUP_GUIDE.md with comprehensive installation instructions`
 12. `docs: add CONTRIBUTIONS.md with team roles and file contributions`
 
-### Phase VI: Innovation Spark - Movie Comparison & Analytics Feature
+### Phase VI: Innovation Spark - Movie Journey Timeline Feature
 **Status:** ✅ Completed
 
-**Feature Description:** Advanced Movie Comparison & Discovery Analytics
+**Feature Description:** Movie Journey Timeline with Trends and Insights
 
-This full-stack feature allows users to deeply compare movies and discover analytics-driven recommendations.
+This full-stack feature gives users a dedicated timeline page to visualize movie interactions (`search`, `view`, `like`, `dislike`, `watchlist`, `watched`) and review behavior trends over time.
 
 **Backend Implementation:**
-- Enhanced compare endpoint to support up to 5 movies (not just 2)
-- Added comparison scoring algorithm to rank similarity
-- Integrated personalized discovery analytics
-- Created new endpoint: `/api/recommendations/analytics/`
+- Added `JourneyTimelineService` for timeline aggregation and insight generation
+- Implemented daily grouped activity analysis by interaction type
+- Added summary metrics (active days, total events, best streak, top action)
+- Created new endpoint: `/api/recommendations/journey/?days=30`
 
 **Frontend Implementation:**
-- Built interactive multi-movie comparison UI
-- Added side-by-side analytics visualization
-- Implemented similarity scoring display
-- Created personalized recommendation cards based on comparison
+- Built new top-level page: `/journey`
+- Added window selector (7/30/90 days) and stacked timeline chart
+- Added action breakdown panel, insight cards, and recent activity feed
+- Added `Journey` as a first-class navigation item in the top navbar
 
 **Files Modified:**
-- Backend: `backend/movies/views.py, backend/recommendations/services/engine.py`
-- Frontend: `frontend/src/app/compare/page.tsx, frontend/src/components/ComparisonCard.tsx`
+- Backend: `backend/recommendations/services/journey.py, backend/recommendations/views.py, backend/recommendations/urls.py, backend/recommendations/tests.py`
+- Frontend: `frontend/src/app/journey/page.tsx, frontend/src/components/Navbar.tsx, frontend/src/lib/api.ts, frontend/src/types/movie.ts`
 
 **Commits:**
-13. `feat: implement advanced multi-movie comparison feature`
-14. `feat: add comparison analytics engine with similarity scoring`
-15. `feat: build interactive movie comparison UI with analytics`
+13. `feat: add movie journey timeline backend aggregation service`
+14. `feat: expose journey timeline API endpoint and test coverage`
+15. `feat: build Journey page UI and integrate top navigation link`
 
 ---
 
@@ -215,7 +215,7 @@ Coverage: 78% (critical components)
 | Backend Tests | 23 |
 | Frontend Tests | 18 |
 | Bugs Fixed | 7 |
-| Features Added | 1 (Comparison Analytics) |
+| Features Added | 1 (Movie Journey Timeline) |
 | Code Quality Issues Resolved | 5 |
 | Lines of Test Code | 500+ |
 
@@ -245,6 +245,6 @@ All phases have been successfully completed:
 - ✅ Phase III: Code Quality & Refactoring (consolidated and improved)
 - ✅ Phase IV: Testing & Validation (41+ tests passing)
 - ✅ Phase V: Git Workflow & Contributions (15+ meaningful commits)
-- ✅ Phase VI: Innovation Feature (Multi-movie comparison with analytics)
+- ✅ Phase VI: Innovation Feature (Movie Journey Timeline with trend analytics)
 
 The CineQuest application is now production-ready with comprehensive test coverage, clean code architecture, and an innovative feature that enhances user experience.
