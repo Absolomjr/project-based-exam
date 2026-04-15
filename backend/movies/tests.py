@@ -3,10 +3,10 @@ Comprehensive test suite for Movies API.
 Tests cover key endpoints, model logic, and data synchronization behavior.
 """
 
-from django.test import TestCase, APIClient
+from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from datetime import datetime
 
 from .models import Movie, Genre, Person, MovieCast
@@ -32,7 +32,7 @@ class GenreModelTests(TestCase):
     def test_genre_unique_tmdb_id(self):
         """Test that tmdb_id is unique across genres."""
         genre1 = Genre.objects.create(tmdb_id=28, name="Action", slug="action")
-       
+        
         with self.assertRaises(Exception):
             Genre.objects.create(tmdb_id=28, name="Action Film", slug="action-film")
 
@@ -45,7 +45,7 @@ class GenreModelTests(TestCase):
         """Test that genres are ordered by name."""
         Genre.objects.create(tmdb_id=28, name="Action", slug="action")
         Genre.objects.create(tmdb_id=12, name="Adventure", slug="adventure")
-       
+        
         genres = list(Genre.objects.all().values_list('name', flat=True))
         self.assertEqual(genres, ["Action", "Adventure"])
 
@@ -74,7 +74,7 @@ class MovieModelTests(TestCase):
             overview="An insomniac office worker..."
         )
         movie.genres.add(self.genre)
-       
+        
         self.assertEqual(movie.title, "Fight Club")
         self.assertEqual(movie.tmdb_id, 550)
         self.assertEqual(movie.runtime, 139)
@@ -95,7 +95,7 @@ class MovieModelTests(TestCase):
         movie1 = Movie.objects.create(tmdb_id=1, title="Movie 1", popularity=10.0)
         movie2 = Movie.objects.create(tmdb_id=2, title="Movie 2", popularity=20.0)
         movie3 = Movie.objects.create(tmdb_id=3, title="Movie 3", popularity=15.0)
-       
+        
         movies = list(Movie.objects.all())
         self.assertEqual(movies[0].title, "Movie 2")
         self.assertEqual(movies[1].title, "Movie 3")
@@ -110,7 +110,7 @@ class MovieModelTests(TestCase):
             release_date=datetime(1999, 10, 15).date()
         )
         movie.genres.add(self.genre, genre2)
-       
+        
         self.assertEqual(movie.genres.count(), 2)
         self.assertIn(self.genre, movie.genres.all())
 
@@ -135,7 +135,7 @@ class MovieAPITests(APITestCase):
             popularity=25.5
         )
         self.movie1.genres.add(self.genre)
-       
+        
         self.movie2 = Movie.objects.create(
             tmdb_id=680,
             title="Pulp Fiction",
@@ -170,9 +170,10 @@ class MovieAPITests(APITestCase):
         """Test that genre list endpoint returns all genres."""
         response = self.client.get('/api/movies/genres/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)
+        items = response.data.get('results', response.data) if isinstance(response.data, dict) else response.data
+        self.assertGreaterEqual(len(items), 1)
         # Check that our created genre is in the results
-        genre_names = [g['name'] for g in response.data]
+        genre_names = [g['name'] for g in items]
         self.assertIn('Action', genre_names)
 
     def test_mood_list_endpoint(self):
@@ -275,7 +276,7 @@ class APIResponseStructureTests(APITestCase):
         """Test that MovieDetailSerializer includes all required fields."""
         serializer = MovieDetailSerializer(self.movie)
         data = serializer.data
-       
+        
         required_fields = ['id', 'title', 'overview', 'release_date', 'popularity']
         for field in required_fields:
             self.assertIn(field, data)
@@ -284,8 +285,7 @@ class APIResponseStructureTests(APITestCase):
         """Test that GenreSerializer returns correct structure."""
         serializer = GenreSerializer(self.genre)
         data = serializer.data
-       
+        
         self.assertEqual(data['name'], 'Action')
         self.assertEqual(data['slug'], 'action')
         self.assertEqual(data['tmdb_id'], 28)
-
