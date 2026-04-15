@@ -8,9 +8,161 @@ import type {
   User,
   GenrePreference,
   WatchlistItem,
+  JourneyTimelineResponse,
 } from "@/types/movie";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const JOURNEY_ENDPOINT_CACHE_KEY = "cq_journey_endpoint_available";
+
+type DashboardApiResponse = {
+  summary: {
+    total_interactions: number;
+    likes: number;
+    dislikes: number;
+    watched: number;
+    searches: number;
+    watchlist_total: number;
+  };
+  activity_timeline: Array<{ date: string; count: number }>;
+  recent_activity: Array<{
+    interaction_type: "search" | "view" | "like" | "dislike" | "watchlist" | "watched";
+    movie_title: string;
+    created_at: string;
+    movie_tmdb_id?: number;
+  }>;
+};
+
+type JourneyEventType = "search" | "view" | "like" | "dislike" | "watchlist" | "watched";
+
+function getJourneyEndpointAvailability(): boolean | null {
+  if (typeof window === "undefined") return null;
+  const value = sessionStorage.getItem(JOURNEY_ENDPOINT_CACHE_KEY);
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return null;
+}
+
+function setJourneyEndpointAvailability(isAvailable: boolean) {
+  if (typeof window === "undefined") return;
+  sessionStorage.setItem(JOURNEY_ENDPOINT_CACHE_KEY, String(isAvailable));
+}
+
+function proportionalByType(total: number, weights: Record<JourneyEventType, number>) {
+  const byType: Record<JourneyEventType, number> = {
+    search: 0,
+    view: 0,
+    like: 0,
+    dislike: 0,
+    watchlist: 0,
+    watched: 0,
+  };
+
+  if (total <= 0) return byType;
+
+  const weightTotal = Object.values(weights).reduce((sum, value) => sum + value, 0);
+  if (weightTotal <= 0) {
+    byType.view = total;
+    return byType;
+  }
+
+  let assigned = 0;
+  const remainders: Array<{ type: JourneyEventType; remainder: number }> = [];
+
+  (Object.keys(byType) as JourneyEventType[]).forEach((type) => {
+    const raw = (total * weights[type]) / weightTotal;
+    const floor = Math.floor(raw);
+    byType[type] = floor;
+    assigned += floor;
+    remainders.push({ type, remainder: raw - floor });
+  });
+
+  // Distribute rounding leftovers to the largest remainders to keep totals exact.
+  let remaining = total - assigned;
+  remainders.sort((a, b) => b.remainder - a.remainder);
+  let idx = 0;
+  while (remaining > 0) {
+    const target = remainders[idx % remainders.length];
+    byType[target.type] += 1;
+    idx += 1;
+    remaining -= 1;
+  }
+
+  return byType;
+}
+
+function mapDashboardToJourney(data: DashboardApiResponse, days: number): JourneyTimelineResponse {
+  const safeDays = Math.min(Math.max(days, 7), 120);
+
+  const summaryTotal = data.summary.total_interactions || 0;
+  const searchCount = data.summary.searches || 0;
+  const likeCount = data.summary.likes || 0;
+  const dislikeCount = data.summary.dislikes || 0;
+  const watchedCount = data.summary.watched || 0;
+  const watchlistCount = data.summary.watchlist_total || 0;
+
+  // Views are estimated as the remainder of interactions not captured by explicit typed counters.
+  const knownTypedCount = searchCount + likeCount + dislikeCount + watchedCount + watchlistCount;
+  const viewCount = Math.max(summaryTotal - knownTypedCount, 0);
+
+  const weights: Record<JourneyEventType, number> = {
+    search: searchCount,
+    view: viewCount,
+    like: likeCount,
+    dislike: dislikeCount,
+    watchlist: watchlistCount,
+    watched: watchedCount,
+  };
+
+  const timeline = data.activity_timeline.map((point) => ({
+    date: point.date,
+    total: point.count,
+    by_type: proportionalByType(point.count, weights),
+  }));
+
+  const typeTotals = [
+    { type: "search" as const, count: searchCount },
+    { type: "view" as const, count: viewCount },
+    { type: "like" as const, count: likeCount },
+    { type: "dislike" as const, count: dislikeCount },
+    { type: "watchlist" as const, count: watchlistCount },
+    { type: "watched" as const, count: watchedCount },
+  ];
+
+  const topType = [...typeTotals].sort((a, b) => b.count - a.count)[0] || {
+    type: "view" as const,
+    count: 0,
+  };
+
+  const mostActiveDay = timeline.length
+    ? [...timeline].sort((a, b) => b.total - a.total)[0]
+    : null;
+
+  const recentEvents = (data.recent_activity || []).map((event) => ({
+    type: event.interaction_type,
+    movie_tmdb_id: event.movie_tmdb_id || 0,
+    movie_title: event.movie_title,
+    date: event.created_at,
+  }));
+
+  return {
+    window_days: safeDays,
+    summary: {
+      total_events: data.summary.total_interactions || 0,
+      active_days: timeline.filter((day) => day.total > 0).length,
+      activity_streak_days: 0,
+      most_active_day: mostActiveDay || null,
+      top_interaction_type: topType.type,
+      top_interaction_count: topType.count,
+    },
+    type_totals: typeTotals,
+    timeline,
+    recent_events: recentEvents,
+    insights: [
+      "Journey compatibility mode is active while the dedicated journey API is unavailable.",
+      `Tracked ${summaryTotal} events in the selected window.`,
+    ],
+  };
+}
 
 // Token Management
 
@@ -42,7 +194,7 @@ export function clearTokens() {
   }
 }
 
-// the fetch wrapper that handles authentication and token refreshing
+// Fetch Wrapper
 
 async function apiFetch<T>(
   endpoint: string,
@@ -94,7 +246,7 @@ async function apiFetch<T>(
   return response.json();
 }
 
-//  The Auth API
+// Auth API
 
 export const authAPI = {
   login: async (username: string, password: string) => {
@@ -236,4 +388,27 @@ export const recommendationsAPI = {
     apiFetch(`/recommendations/watchlist/${id}/`, { method: "DELETE" }),
 
   getDashboard: () => apiFetch<any>("/recommendations/dashboard/"),
+
+  getJourneyTimeline: async (days = 30) => {
+    const safeDays = Math.min(Math.max(days, 7), 120);
+    const endpointAvailability = getJourneyEndpointAvailability();
+
+    if (endpointAvailability === false) {
+      const dashboard = await apiFetch<DashboardApiResponse>("/recommendations/dashboard/");
+      return mapDashboardToJourney(dashboard, safeDays);
+    }
+
+    try {
+      const journey = await apiFetch<JourneyTimelineResponse>(`/recommendations/journey/?days=${safeDays}`);
+      setJourneyEndpointAvailability(true);
+      return journey;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
+        setJourneyEndpointAvailability(false);
+        const dashboard = await apiFetch<DashboardApiResponse>("/recommendations/dashboard/");
+        return mapDashboardToJourney(dashboard, safeDays);
+      }
+      throw error;
+    }
+  },
 };
