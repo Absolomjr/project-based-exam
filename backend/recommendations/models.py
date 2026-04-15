@@ -1,3 +1,8 @@
+"""
+Models for user interactions, genre preferences, and watchlists
+used to power recommendation logic and personalization.
+"""
+
 from django.db import models
 from django.conf import settings
 
