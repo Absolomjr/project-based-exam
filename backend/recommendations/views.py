@@ -1,12 +1,3 @@
-"""
-API views for recommendations.
-
-Handles personalized movie suggestions, user interaction tracking,
-watchlist management, and dashboard analytics. Integrates the 
-RecommendationEngine and supports both internal models and TMDB data.
-"""
-
-
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes, action
@@ -18,14 +9,15 @@ from .serializers import (
     UserMovieInteractionSerializer,
     UserGenrePreferenceSerializer,
     WatchlistSerializer,
-
 )
 from .services.engine import RecommendationEngine
+from .services.journey import JourneyTimelineService
 from movies.serializers import TMDBMovieSerializer
 
 engine = RecommendationEngine()
+journey_service = JourneyTimelineService()
 
-'''views.py - API endpoints for movie recommendations and user interactions.'''
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def personalized_recommendations(request):
@@ -193,3 +185,15 @@ def dashboard_stats(request):
             },
             status=status.HTTP_200_OK,
         )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def journey_timeline(request):
+    """
+    GET /api/recommendations/journey/?days=30
+    Returns timeline events, trends, and insight cards for user activity history.
+    """
+    days = request.query_params.get("days", 30)
+    payload = journey_service.get_user_journey(request.user, days=days)
+    return Response(payload)
