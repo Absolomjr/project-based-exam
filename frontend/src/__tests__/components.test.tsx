@@ -1,7 +1,7 @@
-
-//  Frontend Component Tests
-//  Tests for critical UI components and user interactions
- 
+ /**
+ * Frontend Component Tests
+ * Tests for critical UI components and user interactions
+ */
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -10,9 +10,28 @@ import MovieCarousel from '@/components/MovieCarousel';
 import SearchModal from '@/components/SearchModal';
 import type { MovieCompact } from '@/types/movie';
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}));
 
-// Mock data for testing
- 
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    const { fill, unoptimized, ...imageProps } = props;
+    return <img {...imageProps} />;
+  },
+}));
+
+/**
+ * Mock data for testing
+ */
 const mockMovie: MovieCompact = {
   id: 1,
   tmdb_id: 550,
@@ -56,7 +75,7 @@ describe('MovieCard Component', () => {
    */
   test('renders movie card with title and rating', () => {
     render(<MovieCard movie={mockMovie} index={0} />);
-    
+   
     expect(screen.getByText(mockMovie.title)).toBeInTheDocument();
     expect(screen.getByText(mockMovie.vote_average.toFixed(1))).toBeInTheDocument();
   });
@@ -67,18 +86,18 @@ describe('MovieCard Component', () => {
    */
   test('displays release year when available', () => {
     render(<MovieCard movie={mockMovie} index={0} />);
-    
+   
     expect(screen.getByText('1999')).toBeInTheDocument();
   });
 
   /**
-   * Test: MovieCard handles the missing year gracefully
+   * Test: MovieCard handles missing year gracefully
    * Why: Ensures component doesn't crash with incomplete data
    */
   test('handles movie without year gracefully', () => {
     const movieNoYear = { ...mockMovie, year: null };
     const { container } = render(<MovieCard movie={movieNoYear} index={0} />);
-    
+   
     expect(container).toBeInTheDocument();
     expect(screen.getByText(mockMovie.title)).toBeInTheDocument();
   });
@@ -90,9 +109,9 @@ describe('MovieCard Component', () => {
   test('applies animation delay based on index', () => {
     const { container } = render(<MovieCard movie={mockMovie} index={3} />);
     const card = container.firstChild;
-    
+   
     // Check that animation style is applied
-    expect(card).toHaveStyle({ animationDelay: expect.any(String) });
+    expect(card).toHaveStyle({ animationDelay: '150ms' });
   });
 });
 
@@ -109,7 +128,7 @@ describe('MovieCarousel Component', () => {
         loading={false}
       />
     );
-    
+   
     expect(screen.getByText('Test Movies')).toBeInTheDocument();
     expect(screen.getByText(mockMovies[0].title)).toBeInTheDocument();
     expect(screen.getByText(mockMovies[1].title)).toBeInTheDocument();
@@ -128,7 +147,7 @@ describe('MovieCarousel Component', () => {
         loading={true}
       />
     );
-    
+   
     // Skeleton elements should be rendered
     const skeletons = container.querySelectorAll('[class*="skeleton"]');
     expect(skeletons.length).toBeGreaterThan(0);
@@ -146,7 +165,7 @@ describe('MovieCarousel Component', () => {
         loading={false}
       />
     );
-    
+   
     expect(screen.getByText('No Movies')).toBeInTheDocument();
     expect(container).toBeInTheDocument();
   });
@@ -165,7 +184,7 @@ describe('MovieCarousel Component', () => {
         loading={false}
       />
     );
-    
+   
     expect(screen.getByText(subtitle)).toBeInTheDocument();
   });
 });
@@ -179,7 +198,7 @@ describe('SearchModal Component', () => {
     const { container } = render(
       <SearchModal open={false} onClose={() => {}} />
     );
-    
+   
     // Modal should not be in the DOM
     const modal = container.querySelector('[class*="fixed"]');
     expect(modal).not.toBeInTheDocument();
@@ -193,7 +212,7 @@ describe('SearchModal Component', () => {
     render(
       <SearchModal open={true} onClose={() => {}} />
     );
-    
+   
     const input = screen.getByPlaceholderText(/search movies/i);
     expect(input).toBeInTheDocument();
   });
@@ -207,10 +226,10 @@ describe('SearchModal Component', () => {
     render(
       <SearchModal open={true} onClose={onCloseMock} />
     );
-    
+   
     const input = screen.getByPlaceholderText(/search movies/i);
     fireEvent.keyDown(input, { key: 'Escape' });
-    
+   
     expect(onCloseMock).toHaveBeenCalled();
   });
 
@@ -222,7 +241,7 @@ describe('SearchModal Component', () => {
     render(
       <SearchModal open={true} onClose={() => {}} />
     );
-    
+   
     expect(screen.getByText(/try searching for/i)).toBeInTheDocument();
     expect(screen.getByText('Inception')).toBeInTheDocument();
   });
@@ -236,7 +255,7 @@ describe('SearchModal Component', () => {
     const { container } = render(
       <SearchModal open={true} onClose={onCloseMock} />
     );
-    
+   
     // Find and click the backdrop
     const backdrop = container.querySelector('[class*="backdrop"]');
     if (backdrop) {
@@ -259,7 +278,7 @@ describe('MovieCarousel Array Safety', () => {
         loading={false}
       />
     );
-    
+   
     // Should not crash and should render properly
     expect(screen.getByText('Safe Convert')).toBeInTheDocument();
     expect(container).toBeInTheDocument();
@@ -277,8 +296,8 @@ describe('MovieCarousel Array Safety', () => {
         loading={false}
       />
     );
-    
-
+   
+    // Check that all movies display with correct titles
     mockMovies.forEach(movie => {
       expect(screen.getByText(movie.title)).toBeInTheDocument();
     });
@@ -292,7 +311,7 @@ describe('Component Interaction Tests', () => {
    */
   test('MovieCard elements are interactive', () => {
     const { container } = render(<MovieCard movie={mockMovie} index={0} />);
-    
+   
     // Check that card is interactive (has link or button)
     const interactiveElements = container.querySelectorAll('[role="link"], [role="button"], a, button');
     expect(interactiveElements.length).toBeGreaterThan(0);
@@ -310,7 +329,7 @@ describe('Component Interaction Tests', () => {
         loading={false}
       />
     );
-    
+   
     // Check for scroll buttons
     const buttons = container.querySelectorAll('button');
     expect(buttons.length).toBeGreaterThan(0);
@@ -319,47 +338,47 @@ describe('Component Interaction Tests', () => {
 
 /**
  * Test Summary:
- * 
+ *
  * TESTED AREAS:
  * 1. MovieCard Component:
  *    - Correct rendering of title and rating
  *    - Year display logic
  *    - Animation application
  *    - Graceful degradation with missing data
- * 
+ *
  * 2. MovieCarousel Component:
  *    - Multiple movies rendering
  *    - Loading state handling
  *    - Empty state handling
  *    - Subtitle display
  *    - Array safety conversion
- * 
+ *
  * 3. SearchModal Component:
  *    - Modal visibility toggling
  *    - Search input availability
  *    - Keyboard shortcuts (Escape)
  *    - Hint display
  *    - Backdrop interaction
- * 
+ *
  * UNTESTED AREAS & RISKS:
  * 1. API Integration:
  *    - Actual API calls and error handling are mocked
  *    - Real network failures could cause issues in production
  *    Risk: High - Real API errors may not be handled properly
- * 
+ *
  * 2. Authentication Flow:
  *    - Auth modal and login/signup not tested
  *    Risk: High - Auth errors could break app navigation
- * 
+ *
  * 3. Complex User Interactions:
  *    - Multi-step workflows not tested
  *    - State management across multiple components
  *    Risk: Medium - Complex flows may have edge case bugs
- * 
+ *
  * 4. Responsive Design:
  *    - Mobile/tablet layouts not tested
  *    Risk: Medium - Layout may break on different screen sizes
- * 
+ *
  * 5. Performance:
  *    - Large list rendering (100+ movies)
  *    - Memory leaks from event listeners
