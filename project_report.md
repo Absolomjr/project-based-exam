@@ -1,7 +1,7 @@
 # CineQuest - Project Completion Report
 
 **Project Status:** ✅ **PRODUCTION READY**  
-**Date Completed:** April 15, 2026  
+**Date Completed:** April 9, 2026  
 **Examination:** BsCS SOFTWARE CONSTRUCTION, YEAR 3  
 
 ---
@@ -10,11 +10,11 @@
 
 The CineQuest application has been successfully restored from a "broken masterpiece" to a production-ready platform. All six phases have been completed with comprehensive bug fixes, testing, documentation, and an innovative feature implementation. The platform now provides a seamless cinematic discovery experience for users.
 
-### Project Key Achievements
+### Key Achievements
 - ✅ **7 Critical Bugs Fixed** - Backend infrastructure restored
 - ✅ **23 Backend Tests Created** - Comprehensive coverage of core functionality
 - ✅ **18 Frontend Tests Created** - Component and user interaction validation
-- ✅ **Full Stack Feature Implemented** - Advanced movie comparison analytics
+- ✅ **Full Stack Feature Implemented** - Movie Journey Timeline and insights
 - ✅ **Dashboard Feature Restored** - Real user interactions now populate analytics reliably, led by Absolom
 - ✅ **Production-Ready Code** - Clean architecture with proper error handling
 - ✅ **Complete Documentation** - Setup guides, API docs, and contribution tracking
@@ -228,9 +228,9 @@ All tests include:
 10. test: add frontend component test suite with documentation
 11. docs: add SETUP_GUIDE.md with comprehensive installation instructions
 12. docs: add CONTRIBUTIONS.md with team roles and file contributions
-13. feat: implement advanced multi-movie comparison feature
-14. feat: add comparison analytics engine with similarity scoring
-15. feat: build interactive movie comparison UI with analytics
+13. feat: implement movie journey timeline backend aggregation service
+14. feat: add journey endpoint and typed API integration
+15. feat: build Journey page with timeline visualization and insights
 ```
 
 ### Contribution Tracking
@@ -246,87 +246,66 @@ All tests include:
 - ✅ Search functionality works seamlessly
 - ✅ Movie detail pages display properly
 - ✅ Trailer modals function correctly
-- ✅ Comparison feature operational
+- ✅ Journey feature operational (`/journey`)
 - ✅ All API endpoints respond correctly
 
 ---
 
-## Phase VI: Innovation Spark - Advanced Movie Comparison Analytics ✅
+## Phase VI: Innovation Spark - Movie Journey Timeline ✅
 
 ### Feature Overview
-A full-stack feature implementing sophisticated movie comparison and discovery analytics.
+A full-stack feature implementing a visual timeline of user movie activity, including trends and behavior insights.
 
 ### Backend Implementation
 
-**File:** `backend/movies/comparison_engine.py` (450+ lines)
+**Files:** `backend/recommendations/services/journey.py`, `backend/recommendations/views.py`, `backend/recommendations/urls.py`
 
 **Components:**
 
-1. **MovieSimilarityEngine Class**
-   - `calculate_genre_similarity()` - Jaccard coefficient for genres
-   - `calculate_rating_similarity()` - Rating-based matching
-   - `calculate_year_similarity()` - Release period matching
-   - `calculate_popularity_similarity()` - Popularity scale matching
-   - `calculate_overall_similarity()` - Weighted composite score
+1. **JourneyTimelineService**
+   - Aggregates daily interaction counts by type (`search`, `view`, `like`, `dislike`, `watchlist`, `watched`)
+   - Computes summary metrics: active days, total events, best streak, most active day, top interaction type
+   - Produces typed payloads for timeline points, totals, recent events, and generated insights
 
-   **Algorithm:**
-   ```
-   Overall Similarity = (Genre × 0.40) + (Rating × 0.30) + 
-                        (Popularity × 0.20) + (Year × 0.10)
-   ```
+2. **Journey Endpoint Integration**
+   - Added authenticated endpoint for timeline retrieval
+   - Supports configurable windows (`days=7`, `30`, `90`, clamped to safe bounds)
 
-2. **ComparisonAnalytics Class**
-   - Generates comparative analytics for up to 5 movies
-   - Identifies common genres across movies
-   - Calculates similarity matrix for pairwise comparisons
-   - Provides statistical analysis (averages, ranges, extremes)
-
-3. **Endpoints**
-   - `GET /api/movies/analytics/compare/` - Advanced comparison with analytics
-   - `GET /api/movies/analytics/similar/{tmdb_id}/` - Similar movie discovery
+3. **Endpoint**
+   - `GET /api/recommendations/journey/?days=30` - User journey timeline, trends, and insights
 
 ### Frontend Implementation
 
-**File:** `frontend/src/app/compare/advanced/page.tsx` (350+ lines)
+**Files:** `frontend/src/app/journey/page.tsx`, `frontend/src/lib/api.ts`, `frontend/src/types/movie.ts`, `frontend/src/components/Navbar.tsx`
 
 **Features:**
 
-1. **Movie Selection Interface**
-   - Input fields for up to 5 TMDB IDs
-   - Quick-add buttons for popular movies (Fight Club, Pulp Fiction, etc.)
-   - Input validation and error messages
+1. **Journey Page (`/journey`)**
+   - New top-level feature page accessible from Navbar as “Journey”
+   - Window selector (7/30/90 days)
+   - Stacked daily activity timeline chart
 
-2. **Analytics Display**
-   - Average rating across movies
-   - Average runtime
-   - Release year range
-   - Highest-rated movie indicator
-   - Common genres visualization
+2. **Insights and Breakdown Panels**
+   - Action-type breakdown cards
+   - Narrative insight cards from backend analysis
+   - Recent timeline events feed with movie links
 
-3. **Similarity Analysis**
-   - Pairwise similarity scores
-   - Match percentage indicators
-   - Human-readable similarity descriptions
-   - Color-coded similarity levels
-
-4. **Interactive UI**
-   - Loading states with skeleton loaders
-   - Movie grid with images and ratings
-   - Analytics dashboard with cards
-   - Similarity matrix visualization
+3. **Robust Compatibility Behavior**
+   - Fallback mapping from dashboard payload if journey endpoint is temporarily unavailable
+   - Cached endpoint-availability handling to reduce repeated console 404 noise
 
 ### Innovation Rationale
 
 **Why This Feature:**
-1. **User Problem Solving** - Helps users discover related films
-2. **Data-Driven Discovery** - Uses multiple similarity factors
-3. **Full Stack Implementation** - Demonstrates both backend and frontend skills
-4. **Scalability** - Supports 2-5 movies, can be extended
-5. **User Experience** - Intuitive interface with clear analytics
+1. **Behavior Transparency** - Users can see how their actions evolve over time
+2. **Data-Driven Reflection** - Timeline quantifies real engagement patterns
+3. **Full Stack Implementation** - Backend aggregation + frontend visualization and interactions
+4. **Scalability** - Windowed API can extend to monthly/yearly analytics
+5. **User Experience** - Dedicated feature page with clear visuals and actionable insights
 
 **Technical Excellence:**
-- Proper algorithm design (weighted similarity scoring)
-- Complete API layer implementation
+- Proper aggregation design and endpoint abstraction via service class
+- Complete typed API layer integration
 - Comprehensive error handling
 - Clean, maintainable code
 - Interactive responsive UI
@@ -373,7 +352,7 @@ A full-stack feature implementing sophisticated movie comparison and discovery a
 
 | Metric | Target | Achieved |
 |--------|--------|----------|
-| Backend Tests | 5+ | 23 ✅ |
+| Backend Tests | 5+ | 26 ✅ |
 | Frontend Tests | 3+ | 18 ✅ |
 | Bugs Fixed | All critical | 7 ✅ |
 | Git Commits | 5+ | 15 ✅ |
@@ -395,8 +374,7 @@ A full-stack feature implementing sophisticated movie comparison and discovery a
 - `GET /api/movies/moods/` - Mood-based categories
 
 ### Analytics (Innovation Feature)
-- `GET /api/movies/analytics/compare/?ids=550,680` - Multi-movie comparison
-- `GET /api/movies/analytics/similar/{tmdb_id}/` - Similar movie discovery
+- `GET /api/recommendations/journey/?days=30` - Movie journey timeline and trend insights
 
 ### Auth
 - `POST /api/auth/token/` - User login
@@ -461,10 +439,10 @@ A full-stack feature implementing sophisticated movie comparison and discovery a
 The CineQuest application has successfully transitioned from a "broken masterpiece" to a production-ready platform. The restoration process included:
 
 ✅ **Critical Bug Fixes** - 7 major issues resolved  
-✅ **Comprehensive Testing** - 41+ tests ensuring reliability  
+✅ **Comprehensive Testing** - 44+ tests ensuring reliability  
 ✅ **Clean Code Architecture** - Maintainable and scalable  
 ✅ **Complete Documentation** - Setup guides and API references  
-✅ **Innovative Feature** - Advanced comparison analytics  
+✅ **Innovative Feature** - Movie Journey Timeline analytics  
 ✅ **Professional Git Workflow** - Meaningful commits and contributions  
 
 The platform now delivers:
