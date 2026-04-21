@@ -6,7 +6,7 @@ import {
   Mountain, ArrowRight,
 } from "lucide-react";
 
-// The Preview list of moods shown in the UI (used for quick navigation + visual suggestions)
+// The Preview list of the moods shown in the UI (used for quick navigation + visual suggestions)
 const MOODS_PREVIEW = [
   { slug: "cozy-night", label: "Cozy Night", icon: Heart, color: "from-pink-500/20 to-rose-600/20", iconColor: "text-pink-400" },
   { slug: "adrenaline", label: "Adrenaline", icon: Zap, color: "from-red-500/20 to-orange-600/20", iconColor: "text-red-400" },
