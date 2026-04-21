@@ -69,7 +69,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# custom user model and password validation settings
+# The custom user model and password validation settings
 AUTH_USER_MODEL = "users.User"
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
